@@ -1,0 +1,24 @@
+{
+    "name": "coulterpeterson/mailchimp-box-laravel",
+    "description": "A frictionless MailChimp signup box you can easily embed in a web page.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Coulter Peterson",
+            "email": "contact@coulterpeterson.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Coulterpeterson\\MailchimpBox\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Coulterpeterson\\MailchimpBox\\MailchimpBoxServiceProvider"
+            ]
+        }
+    }
+}
