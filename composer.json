@@ -12,9 +12,7 @@
         "nztim/mailchimp": "^4.3"
     },
     "autoload": {
-        "psr-4": {
-            "Coulterpeterson\\MailchimpBox\\": "src/"
-        }
+        "classmap": [ "src/" ]
     },
     "extra": {
         "laravel": {

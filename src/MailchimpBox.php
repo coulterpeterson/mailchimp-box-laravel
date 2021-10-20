@@ -2,23 +2,18 @@
 
 namespace Coulterpeterson\MailchimpBox;
 
-use NZTim\Mailchimp;
-use Illuminate\Support\Facades\Log;
+use Mailchimp;
+//use Illuminate\Support\Facades\Log;
 
-class MailchimpBox{
+class MailchimpBox {
 
     public static function subscribe(string $email, string $firstName, string $lastName, 
         string $audienceName, string $tagToApply)
     {
-        // send the event to mailchimp api
-        //return $input1 . ' - ' . $input2;
 
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            Log::error('Invalid email provided.');
-            return;
-        }
+        // Skipping email validation as the MailChimp API package handles that for us
 
-        $email = strtolower($email);
+        dd( self::get_audience_id( $audienceName ) );
 
         // Todo: Get audience ID from audience name
 
@@ -30,14 +25,9 @@ class MailchimpBox{
 
     private static function get_audience_id( string $audienceName )
     {
+        $audiences = Mailchimp::api('GET', '/lists/?fields=[lists,lists.id,lists.name]&count=30', []);
 
-    }
-
-    private static function get_location_prefix_for_api( string $apiKey ) 
-    {
-        $subStrings = explode( '-', $apiKey );
-
-        return $subStrings[1];
+        return $audiences;
     }
 
 
