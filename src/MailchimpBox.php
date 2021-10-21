@@ -5,7 +5,7 @@ namespace Coulterpeterson\MailchimpBox;
 use Mailchimp;
 use React\Promise\Promise;
 use React\Promise\Deferred;
-//use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Log;
 
 class MailchimpBox {
 
@@ -16,42 +16,52 @@ class MailchimpBox {
         // Skipping email validation as the MailChimp API package handles that for us
 
         $audienceIdDeferred = new Deferred();
+
+        $data = [
+            'email' => $email,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'audienceName' => $audienceName,
+            'tagToApply' => $tagToApply
+        ];
         
-        self::get_audience_id( $audienceName )
-            ->then(function ( $audienceId ) {
-                self::subscribe_to_audience( $audienceId, $email, $firstName, $lastName )
-                ->then(function ( $subscribeResult ) {
-                    self::apply_tag_to_member( $audienceId, $email, $tagToApply )
+        // The API calling sequence in Promise form:
+        self::get_audience_id( $data )
+            ->then(function ( $data ) {
+
+                self::subscribe_to_audience( $data )
+                ->then(function ( $data ) {
+
+                    self::apply_tag_to_member( $data )
                     ->done(
-                        function ($result){
-                            dd($result);
+                        function ($data){
+                            Log::info("Mailchimp-Box-Laravel: " . $data['email'] . " was just subscribed");
                         },
                         function($error) {
-                            dd($error);
+                            Log::error("Mailchimp-Box-Laravel: Enountered the following error when applying tag:");
+                            Log::error($error);
                         }
                     );
+
                 })
                 ->otherwise(function ( $error ) {
                     // Error with subscribing to audience
-                    dd($error);
-                })
+                    Log::error("Mailchimp-Box-Laravel: Enountered the following error during subscription attempt:");
+                    Log::error($error);
+                });
+            
+            })
             ->otherwise(function ( $error ) {
-                // Error with getting audience ID
-                dd($error);
+                Log::error("Mailchimp-Box-Laravel: Enountered the following error when getting audience ID:");
+                Log::error($error);
             });
-        });
-
-
-
-            // Then subscribe member to given list
-
-            // Then add given tag to that member
-
     }
 
-    private static function get_audience_id( string $audienceName )
+    private static function get_audience_id( $data )
     {
         $deferred = new Deferred();
+
+        $audienceName = $data['audienceName'];
 
         try 
         {
@@ -72,7 +82,8 @@ class MailchimpBox {
 
             if( $stringA === $stringB )
             {
-                $deferred->resolve($audienceItem['id']);
+                $data['audienceId'] = $audienceItem['id'];
+                $deferred->resolve($data);
             }
         }
 
@@ -81,9 +92,14 @@ class MailchimpBox {
         return $deferred->promise();
     }
 
-    private static function subscribe_to_audience( $audienceId, $email, $firstName, $lastName )
+    private static function subscribe_to_audience( $data )
     {
         $deferred = new Deferred();
+
+        $audienceId = $data['audienceId'];
+        $email = $data['email'];
+        $firstName = $data['firstName'];
+        $lastName = $data['lastName'];
 
         $merge = [
             'FNAME' => $firstName,
@@ -92,8 +108,29 @@ class MailchimpBox {
 
         try 
         {
-            // TODO: Swith to ::api function if this doesn't implement `'status_if_new' => 'subscribed'`
-            $audiences = Mailchimp::subscribe($audienceId, $email, $merge, false);
+            // Using ::api instead of ::subscribe lets us tell Mailchimp to subscribe a user even if they were
+                // accidentally deleted in the MC dashboard, or something similar
+            $payload = [
+				'email_address' => $email,
+				'status_if_new' => 'subscribed',
+				'email_type' => 'html',
+				'status' => 'subscribed',
+				'merge_fields' => [
+					'FNAME' => $firstName,
+					'LNAME' => $lastName,
+				/*	'PHONE' => $customerPhone,
+					'ADDRESS' => array(
+						'addr1' => $customerAddr1,
+						'addr2' => $customerAddr2,
+						'city' => $customerAddrCity,
+						'state' => $customerAddrState,
+						'zip' => $customerAddrZip,
+						'country' => $customerAddrCountry
+					)*/
+                ]
+            ];
+
+            $subscribe = Mailchimp::api( 'PUT', "/lists/$audienceId/members/" . md5($email), $payload );
         }
         catch (Exception $e)
         {
@@ -101,13 +138,17 @@ class MailchimpBox {
             return $deferred->promise();
         }
 
-        $deferred->resolve(true);
+        $deferred->resolve($data);
         return $deferred->promise();
     }
 
-    private static function apply_tag_to_member( $audienceId, $email, $tagToApply )
+    private static function apply_tag_to_member( $data )
     {
         $deferred = new Deferred();
+
+        $audienceId = $data['audienceId'];
+        $email = $data['email'];
+        $tagToApply = $data['tagToApply'];
 
         $payload = [
             'tags' => [
@@ -120,7 +161,7 @@ class MailchimpBox {
 
         try 
         {
-            $audiences = Mailchimp::api('POST', `/lists/$audienceId/members/`.(md5($email)).`/tags`, $payload);
+            $audiences = Mailchimp::api('POST', "/lists/$audienceId/members/" . md5($email) . "/tags", $payload);
         }
         catch (Exception $e)
         {
@@ -128,7 +169,7 @@ class MailchimpBox {
             return $deferred->promise();
         }
 
-        $deferred->resolve(true);
+        $deferred->resolve($data);
         return $deferred->promise();
     }
 
