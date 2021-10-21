@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "nztim/mailchimp": "^4.3"
+        "nztim/mailchimp": "^4.3",
+        "react/promise": "^2.8"
     },
     "autoload": {
         "classmap": [ "src/" ]
