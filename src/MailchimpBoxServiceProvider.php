@@ -47,7 +47,7 @@ class MailchimpBoxServiceProvider extends ServiceProvider
     protected function registerRoutes()
     {
         Route::group( $this->routeConfiguration(), function() {
-            $this->loadRoutesFrom( __DIR__.'/../routes/web.php' );
+            $this->loadRoutesFrom( __DIR__.'/routes/web.php' );
         });
     }
 

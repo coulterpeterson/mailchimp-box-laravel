@@ -1,8 +1,8 @@
 <?php 
 
 // Parameters
-isset($params->audienceName) ? $audienceName = $params->audienceName : $audienceName = '';
-isset($params->tagToApply) ? $tagToApply = $params->tagToApply : $tagToApply = '';
+//isset($data['audienceName']) ? $audienceName = $params->audienceName : $audienceName = '';
+//isset($data['tagToApply']) ? $tagToApply = $params->tagToApply : $tagToApply = '';
 
 
 // No point in showing the form if there's no where to send the data
@@ -22,6 +22,7 @@ if(!$audienceName) {return;}
                 <input type="text" name="lastname" placeholder="Last name" required style="box-shadow: none">
                 <input type="hidden" name="audienceName" value="{{ $audienceName }}">
                 <input type="hidden" name="tagToApply" value="{{ $tagToApply }}">
+                <?php // TODO: add csrf token ?>
             </div>
         </form>
 
@@ -335,7 +336,7 @@ if(!$audienceName) {return;}
 
                 try 
                 {
-                    let r = await fetch("/wp-json/mcbx/v1/add-email-to-list", {method: "POST", body: formData}); 
+                    let r = await fetch("/email/mcbsubscribe", {method: "POST", body: formData}); 
                     //resolve(r);
                     r.json().then(function(data) 
                     {

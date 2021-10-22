@@ -2,17 +2,27 @@
 
 namespace Coulterpeterson\MailchimpBox\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
 class MailchimpBoxController extends Controller
 {
-    public function showBox()
+    public function showBox($audienceName, $tagToApply = '')
     {
         // Expecting $params->audienceName and $params->tagToApply
-        return view( 'mailchimpbox::mailchimpbox.mailchimpbox', compact($params) );
+        return view( 'mailchimpbox::mailchimpbox.mailchimpbox', ['audienceName'=>'test','tagToApply'=>'test'] );
+        // $data = [
+        //     'audienceName' => $audienceName,
+        //     'tagToApply' => $tagToApply
+        // ];
+        
+        // return view( 'mailchimpbox::mailchimpbox.mailchimpbox', $data );
     }
     
-    public function subscribe()
+    public function subscribe(Request $request)
     {
-        //
+        Log::info("Mailchimp-Box-Laravel: Subscribe request raw:");
+        Log::info($request);
     }
 
     // Some example functions
