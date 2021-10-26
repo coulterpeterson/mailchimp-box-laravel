@@ -1,8 +1,8 @@
 <?php 
 
 // Parameters
-//isset($data['audienceName']) ? $audienceName = $params->audienceName : $audienceName = '';
-//isset($data['tagToApply']) ? $tagToApply = $params->tagToApply : $tagToApply = '';
+//isset($request['audienceName']) ? $audienceName = $request['audienceName'] : $audienceName = '';
+//isset($request['tagToApply']) ? $tagToApply = $request['tagToApply'] : $tagToApply = '';
 
 
 // No point in showing the form if there's no where to send the data
@@ -58,6 +58,7 @@ if(!$audienceName) {return;}
             border: 2px solid #DDE5ED;
             font-family: inherit;
             font-size: inherit;
+            display: flex;
         }
 
         /* Form text input */

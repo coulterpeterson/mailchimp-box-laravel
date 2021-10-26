@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Log;
 
 class MailchimpBoxController extends Controller
 {
-    public function showBox($audienceName, $tagToApply = '')
+    public function showBox(Request $request)
+    //public function showBox($audienceName, $tagToApply = '')
     {
         // Expecting $params->audienceName and $params->tagToApply
-        return view( 'mailchimpbox::mailchimpbox.mailchimpbox', ['audienceName'=>'test','tagToApply'=>'test'] );
+        return view( 'mailchimpbox::mailchimpbox.mailchimpbox', $request );
         // $data = [
         //     'audienceName' => $audienceName,
         //     'tagToApply' => $tagToApply
