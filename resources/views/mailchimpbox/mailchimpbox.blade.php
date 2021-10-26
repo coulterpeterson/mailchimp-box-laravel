@@ -54,7 +54,7 @@ if(!$audienceName) {return;}
             width: 100%;
             margin: 0px auto 0px auto;
             border-radius: 40px;
-            background: transparent;
+            background: #fff;
             border: 2px solid #DDE5ED;
             font-family: inherit;
             font-size: inherit;
