@@ -12,7 +12,7 @@ A frictionless MailChimp signup box you can easily embed in a web page.
 ```json
 {
     "name": "yourproject",
-    ...
+    // ...
     "repositories": {
         "mailchimp-box-laravel": {
             "type": "git",
@@ -20,9 +20,10 @@ A frictionless MailChimp signup box you can easily embed in a web page.
         }
     },
     "require": {
-        ...
+        // ...
         "coulterpeterson/mailchimp-box-laravel": "*"
     },
+    // ...
 }
 ```
 
